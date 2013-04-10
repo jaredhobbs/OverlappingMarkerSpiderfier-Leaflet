@@ -41,6 +41,8 @@ Modified by Jared Hobbs
 
     p['spiralLengthFactor'] = 5;
 
+    p['legLayer'] = 'map';
+
     p['legWeight'] = 1.5;
 
     p['legColors'] = {
@@ -60,6 +62,9 @@ Modified by Jared Hobbs
         if (!__hasProp.call(opts, k)) continue;
         v = opts[k];
         this[k] = v;
+      }
+      if (this['legLayer'] === 'map') {
+        this['legLayer'] = this.map;
       }
       this.initMarkerArrays();
       this.listeners = {};
@@ -357,7 +362,7 @@ Modified by Jared Hobbs
             weight: this['legWeight'],
             clickable: false
           });
-          this.map.addLayer(leg);
+          this['legLayer'].addLayer(leg);
           marker['_omsData'] = {
             usualPosition: marker.getLatLng(),
             leg: leg
@@ -395,7 +400,7 @@ Modified by Jared Hobbs
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         marker = _ref[_i];
         if (marker['_omsData'] != null) {
-          this.map.removeLayer(marker['_omsData'].leg);
+          this['legLayer'].removeLayer(marker['_omsData'].leg);
           if (marker !== markerNotToMove) {
             marker.setLatLng(marker['_omsData'].usualPosition);
           }
