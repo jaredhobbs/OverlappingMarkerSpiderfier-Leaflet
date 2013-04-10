@@ -27,6 +27,7 @@ class @['OverlappingMarkerSpiderfier']
   p['spiralLengthStart'] = 11        # ditto
   p['spiralLengthFactor'] = 5        # ditto
 
+  p['legLayer'] = 'map'
   p['legWeight'] = 1.5
   p['legColors'] =
       'usual': '#222'
@@ -35,6 +36,8 @@ class @['OverlappingMarkerSpiderfier']
   # Note: it's OK that this constructor comes after the properties, because of function hoisting
   constructor: (@map, opts = {}) ->
       (@[k] = v) for own k, v of opts
+      if @['legLayer'] == 'map'
+          @['legLayer'] = @map
       @initMarkerArrays()
       @listeners = {}
       @map.addEventListener(e, => @['unspiderfy']()) for e in ['click', 'zoomend']
@@ -183,7 +186,7 @@ class @['OverlappingMarkerSpiderfier']
               weight: @['legWeight']
               clickable: no
           }
-          @map.addLayer(leg)
+          @['legLayer'].addLayer(leg)
           marker['_omsData'] = {usualPosition: marker.getLatLng(), leg: leg}
           unless @['legColors']['highlighted'] is @['legColors']['usual']
               mhl = @makeHighlightListeners(marker)
@@ -204,7 +207,7 @@ class @['OverlappingMarkerSpiderfier']
       nonNearbyMarkers = []
       for marker in @markers
           if marker['_omsData']?
-              @map.removeLayer(marker['_omsData'].leg)
+              @['legLayer'].removeLayer(marker['_omsData'].leg)
               marker.setLatLng(marker['_omsData'].usualPosition) unless marker is markerNotToMove
               marker.setZIndexOffset(0)
               mhl = marker['_omsData'].highlightListeners
