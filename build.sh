@@ -1,6 +1,5 @@
 #!/bin/bash
-
-INDIR=../lib/
+INDIR=./
 INPREFIX=oms
 
 OUTDIR=./tmp/
@@ -10,12 +9,15 @@ OUTFILE=${OUTDIR}${OUTNAME}
 coffee --output $OUTDIR --compile ${INDIR}${INPREFIX}.coffee
 
 java -jar /usr/local/closure-compiler/compiler.jar \
-  --compilation_level SIMPLE_OPTIMIZATIONS \
+  --compilation_level ADVANCED_OPTIMIZATIONS \
   --js ${OUTDIR}${INPREFIX}.js \
   --output_wrapper '(function(){%output%}).call(this);' \
 > $OUTFILE
 
 echo '/*' $(date) '*/' >> $OUTFILE
 
-cp $OUTFILE ../../gh-pages/bin
-cp ${OUTDIR}${INPREFIX}.js ../../gh-pages/bin
+git checkout gh-pages
+cp $OUTFILE bin/
+cp ${OUTDIR}${INPREFIX}.js bin/
+git commit -a -m 'Updated build'
+git checkout master
